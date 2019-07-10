@@ -1,5 +1,3 @@
-#include <nan.h>
-
 class RResponse {
 public:
   int i;
@@ -8,4 +6,4 @@ public:
 };
 
 
-RResponse call_it(Nan::NAN_METHOD_ARGS_TYPE args);
+RResponse call_it(std::string functionName, int arg);

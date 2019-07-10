@@ -5,32 +5,33 @@
 
 // using namespace Rcpp;
 
-RResponse call_it(Nan::NAN_METHOD_ARGS_TYPE args)
+// [[Rcpp::export]]
+RResponse call_it(std::string functionName, int arg)
 {
   
-  // RInside *q = new RInside();
-  // q->parseEvalQ("source(\"rnode-test.R\")");
+  RInside *q = new RInside();
+  q->parseEvalQ("source(\"rnode-test.R\")");
   
-  // std::ostringstream s;
-  // s << functionName << "(" << arg << ")";
+  std::ostringstream s;
+  s << functionName << "(" << arg << ")";
   
-  // SEXP response;
-  // // TODO: fail if r != 0
-  // auto r = q->parseEval(s.str(), response);
+  SEXP response;
+  // TODO: fail if r != 0
+  auto r = q->parseEval(s.str(), response);
 
-  // int t = TYPEOF(response);
+  int t = TYPEOF(response);
 
-  // RResponse rresponse;
+  RResponse rresponse;
 
-  // if (t == STRSXP) {
-  //   std::string response_string = RInside::Proxy(response);
-  //   rresponse.s = response_string;
-  // } else if (t == REALSXP) {
-  //   double response_double = RInside::Proxy(response);
-  //   rresponse.d = response_double;
-  // }
+  if (t == STRSXP) {
+    std::string response_string = RInside::Proxy(response);
+    rresponse.s = response_string;
+  } else if (t == REALSXP) {
+    double response_double = RInside::Proxy(response);
+    rresponse.d = response_double;
+  }
 
-  // return rresponse;
+  return rresponse;
 
   // int temperature = 32;
 
