@@ -1,0 +1,5 @@
+/r_tmp
+/node_modules
+*.log
+/build
+.vscode

@@ -1,0 +1,92 @@
+{
+  # "make_global_settings": [
+  #   ["CXX", "/usr/local/bin/gcc-7"],
+  #   ["LINK", "/usr/local/bin/gcc-7"]
+  # ],
+  # "make_global_settings": [
+  #   ["CXX", "/usr/bin/g++"],
+  #   ["LINK", "/usr/bin/g++"]
+  # ],
+  "targets": [
+    {
+      "target_name": "RNode",
+      "sources": [
+        "src/main.cpp",
+        "src/thing.cpp"
+      ],
+      "variables": {
+        'R_HOME%' : '<!(./r_tmp/R-3.4.3/bin/R RHOME)',
+        'RCPPFLAGS%' : '<!(<(R_HOME%)/bin/R CMD config --cppflags | sed "s/^...//")',
+        'RLDFLAGS%' : '<!(<(R_HOME%)/bin/R CMD config --ldflags)',
+        'RBLAS%' : '<!(<(R_HOME%)/bin/R CMD config BLAS_LIBS)',
+        'RLAPACK%' : '<!(<(R_HOME%)/bin/R CMD config LAPACK_LIBS)',
+        # 'RINSIDEINCL%' : '<!(echo "RInside:::CxxFlags()" | <(R_HOME%)/bin/R --vanilla --slave | sed "s/^...//")',
+        # 'RINSIDELIBS%' : '<!(echo "RInside:::LdFlags()" | <(R_HOME%)/bin/R --vanilla --slave)',
+        'RCPPINCL%' : '<!(echo "Rcpp:::CxxFlags()" | <(R_HOME%)/bin/R --vanilla --slave | sed "s/^...//")',
+        # 'RCPPLIBS%' : '<!(echo "Rcpp:::LdFlags()" | <(R_HOME%)/bin/R --vanilla --slave)',
+      },
+      'conditions': [
+        ['OS!="win"', {
+          "cflags!": [ '-fno-rtti', "-fno-exceptions" ],
+          "cflags_cc!": [
+            "-fno-rtti",
+            "-fno-exceptions"
+          ],
+          # "cflags_cc+": [
+          #   "-frtti", "-fno-exceptions"
+          # ],
+          # "cflags_cc": [
+          #   '-lgomp',
+          #   "-fopenmp"
+          # ],
+          # 'cflags_cc+': ['-frtti','-fno-exceptions'],
+          'xcode_settings': {
+            'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
+            "GCC_ENABLE_CPP_RTTI": 'YES',
+            # "OTHER_CPLUSPLUSFLAGS": [
+            #   '/<(RCPPFLAGS)'
+            # ],
+            # 'OTHER_LDFLAGS': [
+            #   # '-L/usr/local/lib', '-F/Library/Frameworks/R.framework/..', '-framework R'
+            #   '<(RLDFLAGS)'
+            # ]
+          },
+          "include_dirs": [
+            "<!(node -e \"require('nan')\")",
+            '/<(RCPPFLAGS)',
+            '/<(RCPPINCL)'
+          ],
+          "libraries": [
+            # '-L/usr/local/lib',
+            '-L/Users/nick/Code/Personal/RNode/r_tmp/R-3.4.3/lib',
+            '-lR',
+            '-L/Users/nick/Code/Personal/RNode/r_tmp/R-3.4.3/lib',
+            '-lRblas',
+            '-L/Users/nick/Code/Personal/RNode/r_tmp/R-3.4.3/lib',
+            '-lRlapack',
+            # '-F/Library/Frameworks/R.framework/..', '-framework R'
+            # '<(RLDFLAGS)',
+            # '<(RBLAS)',
+            # '<(RLAPACK)'
+          ]
+          # "libraries": [
+          #   '<(RLDFLAGS)'
+          # ]
+          # "link_settings": {
+            # 'library_dirs': ['<(RLDFLAGS)'],
+            # 'libraries': ['-L/usr/local/lib -F/Library/Frameworks/R.framework/.. -framework R -lpcre -llzma -lbz2 -lz -licucore -lm -liconv', '<(RCPPLIBS)', '<(RBLAS)', '<(RLAPACK)']
+          # },
+          # "libraries": [
+            # '-lgomp',
+            # "-fopenmp",
+            # '-L/usr/local/lib -F/Library/Frameworks/R.framework/.. -framework R -lpcre -llzma -lbz2 -lz -licucore -lm -liconv'
+            # '<(RLDFLAGS)'
+            # "-L/Library/Frameworks/R.framework/Versions/3.4/Resources/lib",
+            # "-framework R"
+            # "-lR"
+          # ]
+        }]
+      ]
+    }
+  ]
+}

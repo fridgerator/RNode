@@ -1,0 +1,25 @@
+{
+  "name": "@fridgerator/rnode",
+  "version": "0.1.0",
+  "description": "Node <-> R interoperability",
+  "main": "build/Release/RNode",
+  "repository": "https://github.com/fridgerator/RNode",
+  "author": "Nick Franken <shnick@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "install": "node-gyp rebuild",
+    "compile": "node-gyp rebuild",
+    "build:debug": "node-gyp --debug rebuild"
+  },
+  "dependencies": {
+    "nan": "^2.14.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "node-gyp": "^5.0.2",
+    "segfault-handler": "^1.3.0"
+  },
+  "gypfile": true,
+  "types": "index.d.ts"
+}
