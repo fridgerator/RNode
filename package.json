@@ -9,7 +9,8 @@
   "scripts": {
     "install": "node-gyp rebuild",
     "compile": "node-gyp rebuild",
-    "build:debug": "node-gyp --debug rebuild"
+    "build:debug": "node-gyp --debug rebuild",
+    "test": "mocha"
   },
   "dependencies": {
     "nan": "^2.14.0"

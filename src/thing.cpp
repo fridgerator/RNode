@@ -5,19 +5,46 @@
 
 // using namespace Rcpp;
 
-// [[Rcpp::export]]
-RResponse call_it(std::string functionName, int arg)
+RInside *r_instance;
+
+RResponse call_it(std::string functionName, std::vector<RResponse> args)
 {
   
-  RInside *q = new RInside();
-  q->parseEvalQ("source(\"rnode-test.R\")");
+  if (!r_instance) r_instance = new RInside();
+  r_instance->parseEvalQ("source(\"rnode-test.R\")");
   
   std::ostringstream s;
-  s << functionName << "(" << arg << ")";
-  
+  s << functionName << "(";
+
+  for (unsigned long i = 0; i < args.size(); i++) {
+    if (i != 0) s << ", ";
+    auto arg = args[i];
+
+    switch(arg.r_type) {
+      case RSTRING:
+        s << "\"" << arg.s << "\"";
+        break;
+
+      case RDOUBLE:
+        s << arg.d;
+        break;
+
+      case RINT:
+        s << arg.i;
+        break;
+      
+      default:
+        printf("Couldnt get type of argument\n");
+    }
+  }
+
+  s << ")";
+
+  printf("going to call : %s\n", s.str().c_str());
+
   SEXP response;
   // TODO: fail if r != 0
-  auto r = q->parseEval(s.str(), response);
+  auto r = r_instance->parseEval(s.str(), response);
 
   int t = TYPEOF(response);
 
@@ -25,30 +52,21 @@ RResponse call_it(std::string functionName, int arg)
 
   if (t == STRSXP) {
     std::string response_string = RInside::Proxy(response);
+    rresponse.r_type = RSTRING;
     rresponse.s = response_string;
   } else if (t == REALSXP) {
     double response_double = RInside::Proxy(response);
+    rresponse.d = RDOUBLE;
     rresponse.d = response_double;
   }
 
   return rresponse;
-
-  // int temperature = 32;
-
-  // segfaults
-  // Rprintf("hello, world", 13);
-  // Rcpp::NumericVector a(0);
-  // Function func("fahrenheit_to_kelvin");
-  // auto x = Rcpp::wrap(temperature);
-  // auto result = func(x);
-  // auto t = Rcpp::as<double>(result);
 
   // working
   // RInside* q_ = new RInside();
   // RInside *q = q_;
   // q->assign("Hello, from R!\n", "txt");
   // q->parseEvalQ("cat(txt)");
-
   // print matrix
   // int n = 4;
   // Rcpp::NumericMatrix M(n, n);
